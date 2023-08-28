@@ -1,5 +1,5 @@
 space = 1;
-stripZ = 9;
+stripZ = 4;
 stripY = 12;
 stripX = 50;
 stripYCutOut = 10;
