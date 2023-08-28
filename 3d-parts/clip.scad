@@ -1,11 +1,29 @@
 space = 1;
 stripZ = 9;
 stripY = 12;
-stripX = 150;
+stripX = 50;
 stripYCutOut = 10;
 stripHolderThickness = 2;
+stripAngle = 25;
+holderZ = 2;
+holderBaseY = 4;
+holderBaseZ = 2;
 
-rotate(a=[25,0,0]) ledHolder();
+union(){
+    hull() {
+        holderBase();
+        translate([0,holderBaseY/2, holderBaseZ + holderBaseZ]) rotate(a=[stripAngle,0,0]) cube([stripX, stripY + 2*space + 2*stripHolderThickness, 1]);
+    }
+    translate([0,holderBaseY/2, holderBaseZ + holderBaseZ]) rotate(a=[stripAngle,0,0]) ledHolder();
+}
+
+
+module holderBase() {
+    union() {
+        cube([stripX, stripY + 2*space + 2*stripHolderThickness + holderBaseY, holderBaseZ]);
+        translate([0, holderBaseY / 2, holderBaseZ]) cube([stripX, stripY + 2*space + 2*stripHolderThickness, holderZ]);
+    }
+}
 
 module ledHolder() {
     difference() {
