@@ -9,8 +9,10 @@ esp_inner_pin_z = 6;
 wall_thickness = 2;
 space = 1;
 
-outerCylinder();
-translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
+lid();
+
+// outerCylinder();
+// translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
 
 module espClip() {
     cube([esp_y + 2* space, wall_thickness, esp_x]);
@@ -21,7 +23,22 @@ module espClip() {
 module outerCylinder() {
     difference() {
         cylinder(h=h_max, d=d_max);
-        translate([0, 0, wall_thickness]) cylinder(h=h_max - wall_thickness , d=d_max - 2* wall_thickness );
+        translate([0, 0, wall_thickness]) cylinder(h=h_max - wall_thickness , d=d_max - 2* wall_thickness);
+        translate([0, d_max / -4, 0]) cylinder(h=wall_thickness+space, d=6); // cable hole
     }
+}
+
+module lid() {
+    difference() {
+        cylinder(h=2*wall_thickness, d=d_max+2*wall_thickness);
+        translate ([0,0,wall_thickness]) union() {
+            difference() {
+                cylinder(h=wall_thickness, d=d_max+0.1);
+                cylinder(h=wall_thickness, d=d_max-2*wall_thickness-0.1);
+            } 
+            cylinder(h=wall_thickness, d=d_max-4*wall_thickness);
+        }        
+    }
+
 
 }
