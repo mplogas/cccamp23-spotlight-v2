@@ -1,5 +1,5 @@
 $fn= $preview ? 32 : 256;
-d_max = 42;
+d_max = 40;
 h_max = 65;
 esp_x = 56;
 esp_y = 28;
@@ -9,10 +9,14 @@ esp_inner_pin_z = 6;
 wall_thickness = 2;
 space = 1;
 
-lid();
+sizeTest();
 
-// outerCylinder();
-// translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
+// translate([1.2*d_max, 0, 0]) lid();
+
+// union() {
+//     outerCylinder();
+//     translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
+// }
 
 module espClip() {
     cube([esp_y + 2* space, wall_thickness, esp_x]);
@@ -30,15 +34,28 @@ module outerCylinder() {
 
 module lid() {
     difference() {
-        cylinder(h=2*wall_thickness, d=d_max+2*wall_thickness);
+        cylinder(h=3*wall_thickness, d=d_max+2*wall_thickness);
         translate ([0,0,wall_thickness]) union() {
             difference() {
-                cylinder(h=wall_thickness, d=d_max+0.1);
-                cylinder(h=wall_thickness, d=d_max-2*wall_thickness-0.1);
+                cylinder(h=2*wall_thickness, d=d_max+0.1);
+                cylinder(h=2*wall_thickness, d=d_max-2*wall_thickness-0.1);
             } 
-            cylinder(h=wall_thickness, d=d_max-4*wall_thickness);
+            cylinder(h=2*wall_thickness, d=d_max-4*wall_thickness);
         }        
     }
+}
 
-
+module sizeTest() {
+    difference() {
+        cylinder(h=3*wall_thickness,d=d_max-1);
+        cylinder(h=3*wall_thickness,d=d_max-3*wall_thickness-1);
+    }
+    translate([1.1*d_max,0,0]) difference() {
+        cylinder(h=3*wall_thickness,d=d_max);
+        cylinder(h=3*wall_thickness,d=d_max-3*wall_thickness);
+    }
+    translate([2.2*d_max,0,0]) difference() {
+        cylinder(h=3*wall_thickness,d=d_max+1);
+        cylinder(h=3*wall_thickness,d=d_max-3*wall_thickness+1);
+    }
 }
