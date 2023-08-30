@@ -1,17 +1,17 @@
 $fn= $preview ? 32 : 256;
-d_max = 40;
-h_max = 65;
 esp_x = 56;
 esp_y = 28;
 esp_z = 14;
 esp_inner_pin_y = 20;
 esp_inner_pin_z = 6;
 wall_thickness = 2;
+d_max = 41;
+h_max = esp_x + 2* wall_thickness;
 space = 1;
 
-sizeTest();
+//sizeTest();
 
-// translate([1.2*d_max, 0, 0]) lid();
+translate([1.2*d_max, 0, 0]) lid();
 
 // union() {
 //     outerCylinder();
@@ -19,7 +19,7 @@ sizeTest();
 // }
 
 module espClip() {
-    cube([esp_y + 2* space, wall_thickness, esp_x]);
+    cube([esp_y + 2* space, wall_thickness, esp_x - wall_thickness]);
     translate([(esp_y - esp_inner_pin_y)/2 + space, (esp_inner_pin_z + 2* wall_thickness) * -1, 0]) cube([esp_inner_pin_y, wall_thickness*2, esp_x - wall_thickness]);
     translate([esp_y/2 + space -wall_thickness, (esp_inner_pin_z + 4* wall_thickness) * -1, 0]) cube([wall_thickness*2, wall_thickness*2, esp_x - 2*wall_thickness]);
 }
