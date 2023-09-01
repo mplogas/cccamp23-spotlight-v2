@@ -8,15 +8,17 @@ wall_thickness = 2;
 d_max = 41;
 h_max = esp_x + 2* wall_thickness;
 space = 1;
+cable_height = 54;
+cable_diam =5;
 
 //sizeTest();
 
-translate([1.2*d_max, 0, 0]) lid();
+//translate([1.2*d_max, 0, 0]) lid();
 
-// union() {
-//     outerCylinder();
-//     translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
-// }
+union() {
+    outerCylinder();
+    translate([(esp_y + 2* space)/-2, d_max/2 - 2*wall_thickness - 5, wall_thickness]) espClip();
+}
 
 module espClip() {
     cube([esp_y + 2* space, wall_thickness, esp_x - wall_thickness]);
@@ -26,22 +28,42 @@ module espClip() {
 
 module outerCylinder() {
     difference() {
-        cylinder(h=h_max, d=d_max);
-        translate([0, 0, wall_thickness]) cylinder(h=h_max - wall_thickness , d=d_max - 2* wall_thickness);
-        translate([0, d_max / -4, 0]) cylinder(h=wall_thickness+space, d=6); // cable hole
+        union() {
+            difference() {
+                cylinder(h=h_max, d=d_max);
+                translate([0, 0, wall_thickness]) cylinder(h=h_max - wall_thickness , d=d_max - 2* wall_thickness);
+                translate([0,d_max/-2,0]) cylinder(h=cable_height, d=cable_diam);
+            }
+
+            //mask?
+            translate([0,d_max/-2,0]) difference() {
+                cylinder(h=cable_height+wall_thickness, d=cable_diam+2*wall_thickness);
+                cylinder(h=cable_height, d=cable_diam);
+            }
+        }
+        difference() {
+            translate([0,d_max/-2,0]) difference() cylinder(h=cable_height+wall_thickness, d=cable_diam+2*wall_thickness);
+            cylinder(h=h_max, d=d_max);
+        }
     }
+
+
+
+
 }
+
 
 module lid() {
     difference() {
         cylinder(h=3*wall_thickness, d=d_max+2*wall_thickness);
         translate ([0,0,wall_thickness]) union() {
             difference() {
-                cylinder(h=2*wall_thickness, d=d_max+0.1);
-                cylinder(h=2*wall_thickness, d=d_max-2*wall_thickness-0.1);
-            } 
+                cylinder(h=2*wall_thickness, d=d_max+0.05);
+                cylinder(h=2*wall_thickness, d=d_max-2*wall_thickness-0.05);
+            }
             cylinder(h=2*wall_thickness, d=d_max-4*wall_thickness);
-        }        
+        }
+        translate([0, d_max / -4, 0]) cylinder(h=wall_thickness+space, d=6); // cable hole
     }
 }
 
