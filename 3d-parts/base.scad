@@ -28,21 +28,22 @@ holder_wall = 4;
 holder_clip_diam = 22;
 holder_z = 30;
 
-psBox();
-translate([1.5*ps_y, 0, 0]) psboxLid();
+// psBox();
+// translate([1.5*ps_y, 0, 0]) psboxLid();
 translate([3.1*ps_y, 0, 0]) psBoxHolder();
 
 
 module psboxLid() {
     lid_space = 0.1;
     difference() {
-        cube([ps_y+2*space+4*wall_thickness, x_max+2*space+4*wall_thickness,2*wall_thickness]);
+        cube([ps_y+2*space+4*wall_thickness, x_max+2*space+4*wall_thickness,3*wall_thickness]);
         difference() {
-            translate([wall_thickness - lid_space,wall_thickness - lid_space,wall_thickness]) cube([ps_y+2*space+2*wall_thickness+2*lid_space, x_max+2*space+2*wall_thickness+2*lid_space,wall_thickness]);
-            translate([2*wall_thickness + lid_space,2*wall_thickness + lid_space,wall_thickness]) cube([ps_y+2*space-2*lid_space, x_max+2*space-2*lid_space,wall_thickness]);
+            translate([wall_thickness - lid_space,wall_thickness - lid_space,2*wall_thickness]) cube([ps_y+2*space+2*wall_thickness+2*lid_space, x_max+2*space+2*wall_thickness+2*lid_space,wall_thickness]);
+            translate([2*wall_thickness + lid_space,2*wall_thickness + lid_space,2*wall_thickness]) cube([ps_y+2*space-2*lid_space, x_max+2*space-2*lid_space,wall_thickness]);
         }
-        translate([3*wall_thickness,3*wall_thickness,wall_thickness]) cube([ps_y + wall_thickness, x_max + wall_thickness,wall_thickness]);
-        translate([ps_y - 10,15,0]) cube([toggle_x, toggle_y,toggle_z]);
+        translate([3*wall_thickness,3*wall_thickness,2*wall_thickness]) cube([ps_y + wall_thickness, x_max + wall_thickness,wall_thickness]);
+        translate([ps_y/2 - space,27 + wall_thickness,0]) cube([toggle_y, toggle_x,toggle_z]);
+
     }
 }
 
@@ -84,20 +85,20 @@ module pcScrewThread() {
 }
 
 module psBoxHolder () {
-    holder_x = ps_y + 2* space + 4*wall_thickness;
-    holder_y = ps_z + space + 2*wall_thickness;    
-    holder_rail_z = 5;
-    holder_rail_x = 3*wall_thickness;
+    holder_x = ps_y + 2* space + 4*wall_thickness + 1;
+    holder_y = ps_z + 2* space + 2*wall_thickness;    
+    holder_rail_z = 8;
+    holder_rail_x = 4*wall_thickness;
 
     union() {
         difference() {
             cube([holder_x + 2*holder_wall, holder_y + 2*holder_wall, holder_z + holder_wall]);
             translate([holder_wall, holder_wall, holder_wall]) cube([holder_x, holder_y, holder_z]);
-            translate ([(holder_wall+holder_rail_z)*2, holder_wall+holder_rail_z, 0]) cube([(holder_x + 2*holder_wall)-(holder_wall+holder_rail_z)*4, (holder_y + 2*holder_wall)-(holder_wall+holder_rail_z)*2, holder_wall]);
+            translate ([(holder_wall+holder_rail_z)*1.5, holder_wall+holder_rail_z, 0]) cube([(holder_x + 2*holder_wall)-(holder_wall+holder_rail_z)*3, (holder_y + 2*holder_wall)-(holder_wall+holder_rail_z)*2, holder_wall]);
         }
 
-        translate([holder_wall, holder_wall+2*wall_thickness, holder_wall]) cube([holder_rail_x, holder_y - 2*wall_thickness, holder_rail_z]);
-        translate([holder_x+holder_wall-holder_rail_x, holder_wall+2*wall_thickness, holder_wall]) cube([holder_rail_x, holder_y - 2*wall_thickness, holder_rail_z]);
+        translate([holder_wall, holder_wall+3*wall_thickness + 1, holder_wall]) cube([holder_rail_x, holder_y - 2*wall_thickness, holder_rail_z]);
+        translate([holder_x+holder_wall-holder_rail_x, holder_wall+3*wall_thickness+1, holder_wall]) cube([holder_rail_x, holder_y - 2*wall_thickness, holder_rail_z]);
         
         translate([0,holder_y+2*holder_wall,0])cube([holder_x+2*holder_wall,holder_wall,holder_z+holder_wall]);
         translate([(holder_clip_diam+2*holder_wall)/2+(holder_x-holder_clip_diam)/2,holder_y+3*holder_wall+holder_clip_diam/2,0]) psBoxHolderClip();
