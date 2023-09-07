@@ -9,3 +9,5 @@
 .clang_complete
 .gcc-flags.json
 
+3d-parts/*_test.stl
+3d-parts/*.3mf

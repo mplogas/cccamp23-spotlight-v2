@@ -1,7 +1,7 @@
 space = 1;
 stripZ = 4;
 stripY = 12;
-stripX = 50;
+stripX = 200;
 stripYCutOut = 10;
 stripHolderThickness = 2;
 stripAngle = 25;
