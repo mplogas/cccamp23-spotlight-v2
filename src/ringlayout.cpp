@@ -1,19 +1,11 @@
-#include "ringlayout.h"
+// #include "ringlayout.h"
 
-class RingLayout
-{
-    private:
-        uint8_t pixelCount; 
-    public:
-        RingLayout(uint8_t pixelCount) {
-            this->pixelCount = pixelCount;
-        }
-    protected:
-        //ring0 and ring_all are required!
-        const uint16_t Rings[5] = {0, 1, 16, 16 + 32, this->pixelCount};
+// RingLayout::RingLayout(uint8_t pixelCount) {
+//     setPixelCount(pixelCount);
+// }
 
-        uint8_t _ringCount() const
-        {
-            return sizeof(Rings) / sizeof(Rings[0]);
-        }
-};
+// void RingLayout::setPixelCount(uint8_t pixels) {
+//     pixelCount = pixels;
+// }
+
+//void RingLayout::setRingLayout(uint16_t r[4]) {}
