@@ -1,26 +1,25 @@
 #include "leds.h"
 
-leds::leds(uint16_t pixelCount, uint8_t pin) {
+LEDs::LEDs(uint16_t pixelCount, uint8_t pin) {
     setStrip(pixelCount,pin);
 }
 
-void leds::setStrip(uint16_t pixelCount, uint8_t pin) {
+void LEDs::setStrip(uint16_t pixelCount, uint8_t pin) {
     if (pStrip) delete pStrip;
     pStrip = new NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>(pixelCount,pin);
 }
 
-void leds::init() {
+void LEDs::init() {
     pStrip->Begin();
     pStrip->Show();
 }
 
-void leds::printTopo() {
+void LEDs::printTopo() {
     Serial.println();
     Serial.printf("rings available: ");
     Serial.print(topo.getCountOfRings());
     Serial.println();
     for (uint16_t r = 0; r < topo.getCountOfRings(); r++) {
-            Serial.println();
             Serial.printf("ring: ");
             Serial.print(r);
             Serial.printf(" start: ");
@@ -31,17 +30,29 @@ void leds::printTopo() {
     }
 }
 
-void leds::runEffect(Effect e, unsigned long durationMs) {
+void LEDs::runEffect(Effect e, unsigned long durationMs) {
     RgbColor color = BLUE;
     unsigned long currentRunMs = millis();
+    // Serial.println();
+    // Serial.println("lastrun:");
+    // Serial.println(lastrunMs);
+    // Serial.println("currentrun:");
+    // Serial.println(currentRunMs);
+    // Serial.println("duration:");
+    // Serial.println(durationMs);
+
     if (currentRunMs - lastrunMs >= durationMs) {
+        Serial.println();
+        Serial.println("running effect:");
         switch (e)
         {
             case Outwards:
-                /* code */
+                Serial.println("outwards");
+                effectOutwards();
                 break;
             Inwards:
             default:
+                Serial.println("inwards");
                 effectInwards();
                 break;
         }
@@ -50,124 +61,88 @@ void leds::runEffect(Effect e, unsigned long durationMs) {
     }
 }
 
-void leds::effectInwards()  {
+void LEDs::effectInwards()  {
     // use the topo to map the 2d polar cordinate to the pixel
     // and use that to SetPixelColor
-    RgbColor color = BLUE;
-    for (uint16_t r = topo.getCountOfRings(); r > 0; r--)
-    {
-        //set previous ring black
-        if(r - 1 < topo.getCountOfRings() - 1) {
-            for(uint16_t p = 0; p < topo.getPixelCountAtRing(r); p++)
-            {
-                pStrip->SetPixelColor(topo.Map(r, p), BLACK);
+    RgbColor color = RED;
+    uint8_t currentRing;
 
-            }
-        }
-        pStrip->Show();
-
-        //set actual ring color
-        for(uint16_t p = 0; p < topo.getPixelCountAtRing(r - 1); p++)
-        {
-            pStrip->SetPixelColor(topo.Map(r - 1, p), color);
-
-        }
-        pStrip->Show();
+    Serial.println();
+    if(lastRing > topo.getCountOfRings()) {
+        Serial.println("first run...");
+        currentRing = topo.getCountOfRings() - 1;
+        // Serial.printf("current ring: ");
+        // Serial.print(currentRing);
+        // Serial.println();
     }
+    else {
+        Serial.println();
+        for(uint16_t p = 0; p < topo.getPixelCountAtRing(lastRing); p++)
+        {
+            // Serial.printf("blacking pixel ");
+            // Serial.print(p);
+            // Serial.printf(" overall pixel ");
+            // Serial.print(topo.Map(lastRing, p));
+            // Serial.println();
+            pStrip->SetPixelColor(topo.Map(lastRing, p), BLACK);
+        }
+        pStrip->Show();
+
+        if(lastRing == 0) currentRing = topo.getCountOfRings() - 1;
+        else currentRing = lastRing - 1;
+        // Serial.printf("last ring: ");
+        // Serial.print(lastRing);
+        // Serial.println();
+        // Serial.printf("current ring: ");
+        // Serial.print(currentRing);
+        // Serial.println();
+    }
+
+    //set actual ring color
+    color.Darken(255*currentRing/8); //NOTE: dividing currentRing by the total number of rings will set the outer ring black
+    for(uint16_t p = 0; p < topo.getPixelCountAtRing(currentRing); p++)
+    {
+        // Serial.printf("setting pixel ");
+        // Serial.print(p);
+        // Serial.printf(" overall pixel ");
+        // Serial.print(topo.Map(currentRing, p));
+        // Serial.println();
+        pStrip->SetPixelColor(topo.Map(currentRing, p), color);
+
+    }
+    pStrip->Show();
+
+    lastRing = currentRing;
 }
 
-// class leds {
-//     private:
-//         NeoRingTopology<RingLayout> topo; 
-//         NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>* pStrip = NULL; 
-//         unsigned long lastrunMs;
+void LEDs::effectOutwards()  {
+    RgbColor color = BLUE;
+    uint8_t currentRing;
 
+    Serial.println();
+    if(lastRing > topo.getCountOfRings()) {
+        Serial.println("first run...");
+        currentRing = 0;
+    }
+    else {
+        for(uint16_t p = 0; p < topo.getPixelCountAtRing(lastRing); p++)
+        {
+            pStrip->SetPixelColor(topo.Map(lastRing, p), BLACK);
+        }
+        pStrip->Show();
 
-//         void setStrip(uint16_t pixelCount, uint8_t pin) {
-//             if (pStrip) delete pStrip;
-//             pStrip = new NeoPixelBus<NeoGrbFeature, NeoEsp32Rmt0Ws2812xMethod>(pixelCount,pin);
-//         }
+        if(lastRing == topo.getCountOfRings() - 1) currentRing = 0;
+        else currentRing = lastRing + 1;
+    }
 
-//     public:
+    //set actual ring color
+    color.Darken(255*currentRing/16);
+    for(uint16_t p = 0; p < topo.getPixelCountAtRing(currentRing); p++)
+    {
+        pStrip->SetPixelColor(topo.Map(currentRing, p), color);
 
+    }
+    pStrip->Show();
 
-//         leds(uint16_t pixelCount, uint8_t pin) {
-//             setStrip(pixelCount,pin);
-//         }
-
-//         ~leds()
-//         {
-//         }
-
-//         void init() {
-//             pStrip->Begin();
-//             pStrip->Show();
-//         }
-
-//         void printTopo() {
-//             Serial.println();
-//             Serial.printf("rings available: ");
-//             Serial.print(topo.getCountOfRings());
-//             Serial.println();
-//             for (uint16_t r = 0; r < topo.getCountOfRings(); r++) {
-//                     Serial.println();
-//                     Serial.printf("ring: ");
-//                     Serial.print(r);
-//                     Serial.printf(" start: ");
-//                     Serial.print(topo.Map(r, 0));
-//                     Serial.printf(" end: ");
-//                     Serial.print(topo.Map(r, topo.getPixelCountAtRing(r) - 1));
-//                     Serial.println();
-//             }
-
-//             Serial.printf("total pixels available: ");
-//             Serial.print(topo.getPixelCount());
-//         }
-
-//         void runEffect(Effect e, unsigned long durationMs) {
-//             RgbColor color = BLUE;
-//             unsigned long currentRunMs = millis();
-//             if (currentRunMs - lastrunMs >= durationMs) {
-//                 switch (e)
-//                 {
-//                     case Outwards:
-//                         /* code */
-//                         break;
-//                     Inwards:
-//                     default:
-//                         effectInwards();
-//                         break;
-//                 }
-
-//                 lastrunMs = millis();
-//             }
-
-//         }
-//     protected:   
-//         void effectInwards()  {
-//             // use the topo to map the 2d polar cordinate to the pixel
-//             // and use that to SetPixelColor
-//             RgbColor color = BLUE;
-//             for (uint16_t r = topo.getCountOfRings(); r > 0; r--)
-//             {
-//                 //set previous ring black
-//                 if(r - 1 < topo.getCountOfRings() - 1) {
-//                     for(uint16_t p = 0; p < topo.getPixelCountAtRing(r); p++)
-//                     {
-//                         pStrip->SetPixelColor(topo.Map(r, p), BLACK);
-
-//                     }
-//                 }
-//                 pStrip->Show();
-
-//                 //set actual ring color
-//                 for(uint16_t p = 0; p < topo.getPixelCountAtRing(r - 1); p++)
-//                 {
-//                     pStrip->SetPixelColor(topo.Map(r - 1, p), color);
-
-//                 }
-//                 pStrip->Show();
-//                 }
-//         }
-        
-// };
+    lastRing = currentRing;
+}
