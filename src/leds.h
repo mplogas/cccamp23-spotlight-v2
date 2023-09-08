@@ -13,6 +13,7 @@ static const RgbColor BLACK(0);
 static const RgbColor RED(128, 0, 0);
 static const RgbColor GREEN(0, 128, 0);
 static const RgbColor BLUE(0, 0, 128);
+static const RgbColor ROSE(255, 20, 147);
 
 class LEDs
 {
@@ -22,12 +23,16 @@ class LEDs
         unsigned long lastrunMs = 0;
         void setStrip(uint16_t pixelCount, uint8_t pin);
         uint8_t lastRing = 255;
+        Effect effect;
+        RgbColor color;
     public:
         LEDs(uint16_t pixelCount, uint8_t pin);
 
         void init();
         void printTopo();
-        void runEffect(Effect e, unsigned long durationMs);
+        void setEffect(Effect e);
+        void setColor(RgbColor c);
+        void runEffect(unsigned long durationMs);
     protected:
         void effectInwards();
         void effectOutwards();

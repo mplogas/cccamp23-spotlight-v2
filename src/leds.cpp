@@ -2,6 +2,8 @@
 
 LEDs::LEDs(uint16_t pixelCount, uint8_t pin) {
     setStrip(pixelCount,pin);
+    setColor(BLUE);
+    setEffect(Effect::Outwards);
 }
 
 void LEDs::setStrip(uint16_t pixelCount, uint8_t pin) {
@@ -30,8 +32,15 @@ void LEDs::printTopo() {
     }
 }
 
-void LEDs::runEffect(Effect e, unsigned long durationMs) {
-    RgbColor color = BLUE;
+void LEDs::setColor(RgbColor c) {
+    color = c;
+}
+
+void LEDs::setEffect(Effect e) {
+    effect = e;
+}
+
+void LEDs::runEffect(unsigned long durationMs) {
     unsigned long currentRunMs = millis();
     // Serial.println();
     // Serial.println("lastrun:");
@@ -44,7 +53,7 @@ void LEDs::runEffect(Effect e, unsigned long durationMs) {
     if (currentRunMs - lastrunMs >= durationMs) {
         Serial.println();
         Serial.println("running effect:");
-        switch (e)
+        switch (effect)
         {
             case Outwards:
                 Serial.println("outwards");
@@ -64,7 +73,6 @@ void LEDs::runEffect(Effect e, unsigned long durationMs) {
 void LEDs::effectInwards()  {
     // use the topo to map the 2d polar cordinate to the pixel
     // and use that to SetPixelColor
-    RgbColor color = RED;
     uint8_t currentRing;
 
     Serial.println();
@@ -116,7 +124,6 @@ void LEDs::effectInwards()  {
 }
 
 void LEDs::effectOutwards()  {
-    RgbColor color = BLUE;
     uint8_t currentRing;
 
     Serial.println();

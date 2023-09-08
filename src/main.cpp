@@ -5,6 +5,7 @@ const uint8_t PixelCount = 93;
 const uint8_t PixelPin = 25;  // make sure to set this to the correct pin, ignored for Esp8266
 
 Effect lightEffect = Effect::Outwards;
+RgbColor color = ROSE;
 LEDs light(PixelCount, PixelPin);
 
 void setup()
@@ -15,9 +16,11 @@ void setup()
     Serial.printf("setting up");
     light.init();
     light.printTopo();
+    light.setColor(color);
+    light.setEffect(lightEffect);
  }
 
 void loop()
 {
-    light.runEffect(lightEffect, 750);
+    light.runEffect(350);
  }
