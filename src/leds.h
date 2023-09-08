@@ -29,6 +29,7 @@ class LEDs
         LEDs(uint16_t pixelCount, uint8_t pin);
 
         void init();
+        void init(RgbColor c, Effect e);
         void printTopo();
         void setEffect(Effect e);
         void setColor(RgbColor c);

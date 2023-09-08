@@ -8,16 +8,17 @@ Effect lightEffect = Effect::Outwards;
 RgbColor color = ROSE;
 LEDs light(PixelCount, PixelPin);
 
+
+
 void setup()
 {          
     Serial.begin(115200);
     while (!Serial); // wait for serial attach  
 
     Serial.printf("setting up");
-    light.init();
+    light.init(color,lightEffect);
     light.printTopo();
-    light.setColor(color);
-    light.setEffect(lightEffect);
+
  }
 
 void loop()

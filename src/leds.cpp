@@ -16,6 +16,12 @@ void LEDs::init() {
     pStrip->Show();
 }
 
+void LEDs::init(RgbColor c, Effect e) {
+    init();
+    setColor(c);
+    setEffect(e);
+}
+
 void LEDs::printTopo() {
     Serial.println();
     Serial.printf("rings available: ");
@@ -156,7 +162,7 @@ void LEDs::effectOutwards()  {
     RgbColor c = color;
     uint8_t dimFactor = 255/(currentRing+1); 
     c.Dim(dimFactor); 
-    
+
     for(uint16_t p = 0; p < topo.getPixelCountAtRing(currentRing); p++)
     {
         pStrip->SetPixelColor(topo.Map(currentRing, p), color);
