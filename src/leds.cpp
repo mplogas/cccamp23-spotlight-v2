@@ -51,17 +51,17 @@ void LEDs::runEffect(unsigned long durationMs) {
     // Serial.println(durationMs);
 
     if (currentRunMs - lastrunMs >= durationMs) {
-        Serial.println();
-        Serial.println("running effect:");
+        // Serial.println();
+        // Serial.println("running effect:");
         switch (effect)
         {
             case Outwards:
-                Serial.println("outwards");
+                // Serial.println("outwards");
                 effectOutwards();
                 break;
             Inwards:
             default:
-                Serial.println("inwards");
+                // Serial.println("inwards");
                 effectInwards();
                 break;
         }
@@ -75,7 +75,7 @@ void LEDs::effectInwards()  {
     // and use that to SetPixelColor
     uint8_t currentRing;
 
-    Serial.println();
+    // Serial.println();
     if(lastRing > topo.getCountOfRings()) {
         Serial.println("first run...");
         currentRing = topo.getCountOfRings() - 1;
@@ -84,7 +84,7 @@ void LEDs::effectInwards()  {
         // Serial.println();
     }
     else {
-        Serial.println();
+        // Serial.println();
         for(uint16_t p = 0; p < topo.getPixelCountAtRing(lastRing); p++)
         {
             // Serial.printf("blacking pixel ");
@@ -126,9 +126,9 @@ void LEDs::effectInwards()  {
 void LEDs::effectOutwards()  {
     uint8_t currentRing;
 
-    Serial.println();
+    //Serial.println();
     if(lastRing > topo.getCountOfRings()) {
-        Serial.println("first run...");
+        //Serial.println("first run...");
         currentRing = 0;
     }
     else {
