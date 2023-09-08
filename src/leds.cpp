@@ -39,10 +39,14 @@ void LEDs::printTopo() {
 }
 
 void LEDs::setColor(RgbColor c) {
+    Serial.println();
+    Serial.println("color set");
     color = c;
 }
 
 void LEDs::setEffect(Effect e) {
+    Serial.println();
+    Serial.println("effect set");
     effect = e;
 }
 
