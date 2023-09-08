@@ -107,7 +107,17 @@ void LEDs::effectInwards()  {
     }
 
     //set actual ring color
-    color.Darken(255*currentRing/8); //NOTE: dividing currentRing by the total number of rings will set the outer ring black
+    //creating a copy of the color to dim without modifying the actual color
+    RgbColor c = color;
+    uint8_t dimFactor = 255/(currentRing+1); 
+    // Serial.println();
+    // Serial.printf("current ring: ");
+    // Serial.print(currentRing);
+    // Serial.println();
+    // Serial.printf("dim factor: ");
+    // Serial.print(dimFactor);
+    // Serial.println();
+    c.Dim(dimFactor); 
     for(uint16_t p = 0; p < topo.getPixelCountAtRing(currentRing); p++)
     {
         // Serial.printf("setting pixel ");
@@ -143,7 +153,10 @@ void LEDs::effectOutwards()  {
     }
 
     //set actual ring color
-    color.Darken(255*currentRing/16);
+    RgbColor c = color;
+    uint8_t dimFactor = 255/(currentRing+1); 
+    c.Dim(dimFactor); 
+    
     for(uint16_t p = 0; p < topo.getPixelCountAtRing(currentRing); p++)
     {
         pStrip->SetPixelColor(topo.Map(currentRing, p), color);

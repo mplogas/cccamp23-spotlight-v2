@@ -22,5 +22,5 @@ void setup()
 
 void loop()
 {
-    light.runEffect(350);
+    light.runEffect(250);
  }
