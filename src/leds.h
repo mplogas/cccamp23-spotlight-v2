@@ -25,15 +25,17 @@ class LEDs
         uint8_t lastRing = 255;
         Effect effect;
         RgbColor color;
+        unsigned long durationMs;
     public:
         LEDs(uint16_t pixelCount, uint8_t pin);
 
         void init();
-        void init(RgbColor c, Effect e);
+        void init(RgbColor c, Effect e, unsigned long durationMs);
         void printTopo();
         void setEffect(Effect e);
         void setColor(RgbColor c);
-        void runEffect(unsigned long durationMs);
+        void setSpeed(unsigned long durationMs);
+        void runEffect();
     protected:
         void effectInwards();
         void effectOutwards();

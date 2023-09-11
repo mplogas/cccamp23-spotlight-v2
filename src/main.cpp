@@ -12,6 +12,7 @@ const char* PASSWORD = "#cccamp.2023";
 
 Effect lightEffect = Effect::Outwards;
 RgbColor color = ROSE;
+unsigned long speedMs = 1000;
 LEDs light(PixelCount, PixelPin);
 
 // Create AsyncWebServer object on port 80
@@ -28,33 +29,28 @@ const char index_html[] PROGMEM = R"rawliteral(
     h2 {font-size: 3.0rem;}
     p {font-size: 3.0rem;}
     body {max-width: 600px; margin:0px auto; padding-bottom: 25px;}
-    .switch {position: relative; display: inline-block; width: 120px; height: 68px} 
-    .slider {position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 6px}
-    .slider:before {position: absolute; content: ""; height: 52px; width: 52px; left: 8px; bottom: 8px; background-color: #fff; -webkit-transition: .4s; transition: .4s; border-radius: 3px}
-    input:checked+.slider {background-color: #b30000}
-    input:checked+.slider:before {-webkit-transform: translateX(52px); -ms-transform: translateX(52px); transform: translateX(52px)}
   </style>
 </head>
 <body>
   <h2>Spotlight Control</h2>
   %COLORPLACEHOLDER%
   %EFFECTPLACEHOLDER%
-<script>function watchEffectButtons(element) {
-  var effect = element.value;
-  let formData = new FormData();
-  formData.append("effect", effect);
-
-  // send it out
-  let xhr = new XMLHttpRequest();
-  xhr.open("POST", "/action");
-  xhr.send(formData);
+  %SPEEDPLACEHOLDER%
+<script>
+function watchEffectButtons(element) {
+  sendData("effect",element.value);
 }
 function watchColorPicker(element) {
-  var color = element.value;
-  let formData = new FormData();
-  formData.append("color", color);
+  sendData("color",element.value);
+}
+function watchRangeSlider(element) {
+  sendData("speed",element.value);
+}
 
-  // send it out
+function sendData(key, value) {
+  let formData = new FormData();
+  formData.append(key, value);
+  
   let xhr = new XMLHttpRequest();
   xhr.open("POST", "/action");
   xhr.send(formData);
@@ -64,49 +60,62 @@ function watchColorPicker(element) {
 </html>
 )rawliteral";
 
+String getSpeed() {
+  return String(speedMs, 10);
+}
 
-// Replaces placeholder with button section in your web page
+
 String processor(const String& var){
   //Serial.println(var);
     String result = "";
 
     if(var == "COLORPLACEHOLDER") {
-        result += "<h4>Basecolor</h4>";
-        result += "<label class=\"color\"><input name=\"color\" value=\"#" + Color::rgbToHex(color) + "\" type=\"color\" onchange=\"watchColorPicker(this)\"></label> ";
+        result += "<h4>Animation Color</h4>";
+        result += "<input type=\"color\" id=\"color\" name=\"color\" value=\"#" + Color::rgbToHex(color) + "\" onchange=\"watchColorPicker(this)\" /><label for=\"color\">Base Color</label>";
     }
     if(var == "EFFECTPLACEHOLDER"){
-        result += "<h4>Effects</>";
-        result += "<label class=\"button\"><button class=\"effect\" onclick=\"watchEffectButtons(this)\" value=\"0\" >Inwards</Button></label>";
-        result += "<label class=\"button\"><button class=\"effect\" onclick=\"watchEffectButtons(this)\" value=\"1\" >Outwards</Button></label>";
+        result += "<h4>Animation Effect</>";
+        result += "<div class=\"button\"><button class=\"effect\" onclick=\"watchEffectButtons(this)\" value=\"0\" >Inwards</Button></div>";        
+        result += "<div class=\"button\"><button class=\"effect\" onclick=\"watchEffectButtons(this)\" value=\"1\" >Outwards</Button></div>";
+    }
+    if(var == "SPEEDPLACEHOLDER") {
+        result += "<h4>Animation Speed</h4>";
+        result += "<input type=\"range\" id=\"speed\" name=\"speed\" min=\"100\" max=\"1500\" step=\"50\" value=\"" + getSpeed() + "\" onchange=\"watchRangeSlider(this)\" /><label for=\"speed\">Animation</label>";
     }
     return result;
 }
 
+//TODO: Security? On my embedded device? (⊙＿⊙')
 void postAction(AsyncWebServerRequest *request) {
-  
-
   int params = request->params();
   for (int i = 0; i < params; i++) {
     AsyncWebParameter* p = request->getParam(i);
     Serial.printf("POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
   }
 
-    if(request->hasParam("effect", true)) {
-        Serial.println("Effect");
-        AsyncWebParameter* p = request->getParam("effect", true);
-        Serial.println(p->value().toInt());
-        light.setEffect((Effect)p->value().toInt());
-    }
+  if(request->hasParam("effect", true)) {
+      Serial.println("Effect");
+      AsyncWebParameter* p = request->getParam("effect", true);
+      Serial.println(p->value().toInt());
+      light.setEffect((Effect)p->value().toInt()); 
+  }
 
-    if(request->hasParam("color", true)) {
-        Serial.println("Color");
-        AsyncWebParameter* p = request->getParam("color", true);
-        Serial.println(p->value());
-        light.setColor(Color::hexToRgb(p->value()));
-    }
+  if(request->hasParam("color", true)) {
+      Serial.println("Color");
+      AsyncWebParameter* p = request->getParam("color", true);
+      Serial.println(p->value());
+      light.setColor(Color::hexToRgb(p->value()));
+  }
 
-    request->send_P(200, "text/html", index_html);
-    }
+  if(request->hasParam("speed", true)) {
+      Serial.println("Speed");
+      AsyncWebParameter* p = request->getParam("speed", true);
+      Serial.println(p->value());
+      light.setSpeed(strtoul(p->value().begin(),NULL,10));
+  }
+
+  request->send_P(200, "text/html", index_html);
+}
 
 void setup()
 {          
@@ -114,7 +123,7 @@ void setup()
     while (!Serial); // wait for serial attach  
 
     Serial.printf("setting up");
-    light.init(color,lightEffect);
+    light.init(color,lightEffect,speedMs);
     light.printTopo();
 
     WiFi.mode(WIFI_AP);
@@ -130,5 +139,5 @@ void setup()
 
 void loop()
 {
-    light.runEffect(250);
+    light.runEffect();
  }

@@ -16,10 +16,11 @@ void LEDs::init() {
     pStrip->Show();
 }
 
-void LEDs::init(RgbColor c, Effect e) {
+void LEDs::init(RgbColor rgb, Effect e, unsigned long speedMs) {
     init();
-    setColor(c);
+    setColor(rgb);
     setEffect(e);
+    setSpeed(speedMs);
 }
 
 void LEDs::printTopo() {
@@ -38,10 +39,10 @@ void LEDs::printTopo() {
     }
 }
 
-void LEDs::setColor(RgbColor c) {
+void LEDs::setColor(RgbColor rgb) {
     Serial.println();
     Serial.println("color set");
-    color = c;
+    color = rgb;
 }
 
 void LEDs::setEffect(Effect e) {
@@ -50,7 +51,13 @@ void LEDs::setEffect(Effect e) {
     effect = e;
 }
 
-void LEDs::runEffect(unsigned long durationMs) {
+void LEDs::setSpeed(unsigned long speedMs) {
+    Serial.println();
+    Serial.println("speed set");
+    durationMs = speedMs;
+}
+
+void LEDs::runEffect() {
     unsigned long currentRunMs = millis();
     // Serial.println();
     // Serial.println("lastrun:");
