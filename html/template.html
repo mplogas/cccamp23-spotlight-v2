@@ -104,6 +104,26 @@
             border: 1px solid black;
         }
     </style>
+    <script>
+        function watchEffectButtons(element) {
+            sendData("effect", element.value);
+        }
+        function watchColorPicker(element) {
+            sendData("color", element.value);
+        }
+        function watchRangeSlider(element) {
+            sendData("speed", element.value);
+        }
+
+        function sendData(key, value) {
+            let formData = new FormData();
+            formData.append(key, value);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/action");
+            xhr.send(formData);
+        }
+    </script>
 </head>
 
 <body>
@@ -127,26 +147,6 @@
             onchange="watchRangeSlider(this)" />
         <!-- <label class="label-right" for="speed">in Milliseconds</label> -->
     </div>
-    <script>
-        function watchEffectButtons(element) {
-            sendData("effect", element.value);
-        }
-        function watchColorPicker(element) {
-            sendData("color", element.value);
-        }
-        function watchRangeSlider(element) {
-            sendData("speed", element.value);
-        }
-
-        function sendData(key, value) {
-            let formData = new FormData();
-            formData.append(key, value);
-
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/action");
-            xhr.send(formData);
-        }
-    </script>
 </body>
 
 </html>

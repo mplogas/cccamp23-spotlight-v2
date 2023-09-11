@@ -56,7 +56,8 @@ String processor(const String &var)
   if (var == "SPEEDPLACEHOLDER")
   {
     result += "<h4>Animation Speed</h4><div class=\"col\"><input type=\"range\" id=\"speed\" name=\"speed\" min=\"100\" max=\"1500\" step=\"50\" value=\"";
-    result += String(speedMs, 10);
+    //result += String(speedMs, 10);
+    result += speedMs;
     result += "\" class=\"slider\" onchange=\"watchRangeSlider(this)\" /></div>";
   }
   return result;
