@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <title>Spotlight control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html {
+            font-family: Arial;
+            display: inline-block;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 24px;
+        }
+
+        h4 {
+            font-size: 16px;
+        }
+
+        div.col {
+            margin: 10px;
+        }
+
+        body {
+            max-width: 600px;
+            margin: 0px auto;
+            padding-bottom: 25px;
+        }
+
+        .button {
+            background-color: lightblue;
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            color: darkslategrey;
+            font-size: 16px;
+            padding: 10px 18px;
+            opacity: 0.7;
+        }
+
+        .button:hover {
+            opacity: 1;
+        }
+
+        .label-right {
+            margin-right: 5px;
+            display: block;
+        }
+
+        .color {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-color: transparent;
+            width: 75px;
+            height: 75px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .color::-webkit-color-swatch {
+            border-radius: 50%;
+        }
+
+        .color::-moz-color-swatch {
+            border-radius: 50%;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 50%;
+            height: 20px;
+            background: lightblue;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .slider:hover {
+            opacity: 1;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            background: darkslategrey;
+            cursor: pointer;
+            border: 1px solid black;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            background: darkslategrey;
+            cursor: pointer;
+
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Spotlight Control</h2>
+    <!-- %COLORPLACEHOLDER% -->
+    <h4>Animation Color</h4>
+    <div class="col">
+        <input type="color" id="color" name="color" value="#ff0000" class="color" onchange="watchColorPicker(this)" />
+        <label class="label-right" for="color">Base Color</label>
+    </div>
+    <!-- %EFFECTPLACEHOLDER% -->
+    <h4>Animation Effect</h4>
+    <div class="col">
+            <button class="button" onclick="watchEffectButtons(this)" value="0">Inwards</Button>
+            <button class="button" onclick="watchEffectButtons(this)" value="1">Outwards</Button>
+    </div>
+    <!-- %SPEEDPLACEHOLDER% -->
+    <h4>Animation Speed</h4>
+    <div class="col">
+        <input type="range" id="speed" name="speed" min="100" max="1500" step="50" value="1000" class="slider"
+            onchange="watchRangeSlider(this)" />
+        <label class="label-right" for="speed">in Milliseconds</label>
+    </div>
+    <script>
+        function watchEffectButtons(element) {
+            sendData("effect", element.value);
+        }
+        function watchColorPicker(element) {
+            sendData("color", element.value);
+        }
+        function watchRangeSlider(element) {
+            sendData("speed", element.value);
+        }
+
+        function sendData(key, value) {
+            let formData = new FormData();
+            formData.append(key, value);
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/action");
+            xhr.send(formData);
+        }
+    </script>
+</body>
+
+</html>
